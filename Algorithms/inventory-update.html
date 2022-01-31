@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<script>
+/*
+	Inventory Update
+	
+	Compare and update the inventory stored in a 2D array against a second
+	2D array of a fresh delivery. Update the current existing inventory 
+	item quantities (in arr1). If an item cannot be found, add the new item 
+	and quantity into the inventory array. The returned inventory array 
+	should be in alphabetical order by item.
+*/
+function updateInventory(arr1, arr2) {
+	const inv = {};
+	let result = [];
+
+	for (const item of arr1) {
+		inv[item[1]] = item[0];
+	};
+	
+	for (const item of arr2) {
+		if (inv.hasOwnProperty(item[1])) {
+			inv[item[1]] += item[0];
+		} else {
+			inv[item[1]] = item[0];
+		}
+	};
+	
+	for (const key in inv) {
+		result.push([inv[key], key]);
+	};
+	
+	result.sort((a, b) => a[1].localeCompare(b[1]));
+	
+    return result;
+}
+
+// Example inventory lists
+var curInv = [
+    [5, "Microphone"],
+	[21, "Bowling Ball"],
+	[1, "Hair Pin"],
+    [2, "Dirty Sock"],
+];
+
+var newInv = [
+    [2, "Hair Pin"],
+    [3, "Half-Eaten Apple"],
+    [67, "Bowling Ball"],
+    [7, "Toothpaste"]
+];
+
+document.write(updateInventory([[21, "Bowling Ball"], [2, "Dirty Sock"], [1, "Hair Pin"], [5, "Microphone"]], [[2, "Hair Pin"], [3, "Half-Eaten Apple"], [67, "Bowling Ball"], [7, "Toothpaste"]]));
+
+
+
+</script>
