@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<script>
+	/*
+		Largest prime factor
+		
+		The prime factors of 13195 are 5, 7, 13 and 29.
+
+		What is the largest prime factor of the given number?
+	*/
+		function largestPrimeFactor(number){
+			const startValue = Math.floor(Math.sqrt(number));
+							
+			for (let i = startValue; i > 0; i--) {
+				if (number % i === 0) {
+					if (isPrime(i)) {
+						if (isPrime(number / i)) {
+							if (number / i > i) {
+								return number / i;
+							}
+						};
+						
+						return i
+					}
+				}
+			};			
+			
+			function isPrime(num) {
+				let thisPrime = true;
+				
+				for (let i = 2; i < num; i++) {
+					if (num % i === 0) {
+						thisPrime = false;
+					}
+				};
+				
+				return thisPrime;
+			}
+		};
+
+		document.write(largestPrimeFactor(13195));
+	</script>
+</html>
