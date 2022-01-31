@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+	<script>
+	/*
+		24 game
+		
+		The 24 Game tests a person's mental arithmetic.
+
+		The aim of the game is to arrange four numbers in a way that when
+		evaluated, the result is 24
+
+		Implement a function that takes a string of four digits as its
+		argument, with each digit from 1 to 9 (inclusive) with repetitions
+		allowed, and returns an arithmetic expression that evaluates to the
+		number 24. If no such solution exists, return "no solution exists".
+
+		Rules:
+
+		Only the following operators/functions are allowed: multiplication,
+		division, addition, subtraction.
+		Division should use floating point or rational arithmetic, etc, to
+		preserve remainders.
+		Forming multiple digit numbers from the supplied digits is disallowed.
+		(So an answer of 12+12 when given 1, 2, 2, and 1 is wrong).
+		The order of the digits when given does not have to be preserved.
+		
+		Example input	Example output
+		solve24("4878");	(7-8/8)*4
+		solve24("1234");	3*1*4*2
+		solve24("6789");	(6*8)/(9-7)
+		solve24("1127");	(1+7)*(2+1)
+	*/
+		function solve24(numStr) {
+			const num = numSort(numStr.split(''));
+			const pairs = [[[+num[0], +num[1]], [+num[2], +num[3]]],
+						   [[+num[0], +num[2]], [+num[1], +num[3]]],
+						   [[+num[0], +num[3]], [+num[1], +num[2]]]];
+			const add = ([x, y]) => y + x;
+			const sub = ([x, y]) => y - x;
+			const mul = ([x, y]) => y * x;
+			const div = ([x, y]) => y / x;
+			const act = [add, sub, mul, div];
+			const uniq = [];
+			const calc = [];
+			const result = [];
+			const output = [];
+			let formula = '';
+									
+			uniq.push(pairs[0]);
+			
+			isFirstUniq = false;
+			for (let y = 0; y < 2; y++) {
+				if (pairs[0][y][0] === pairs[1][y][0]
+					&&
+					pairs[0][y][1] === pairs[1][y][1]) {
+						continue;
+				};
+						
+				isFirstUniq = true;
+			};
+			
+			isSecondUniq = false;
+			for (let y = 0; y < 2; y++) {
+				if (pairs[1][y][0] === pairs[2][y][0]
+					&&
+					pairs[1][y][1] === pairs[2][y][1]) {
+						continue;
+				};
+						
+				isSecondUniq = true;
+			};
+			
+			if (isFirstUniq) {
+				if (isSecondUniq) {
+					uniq.push(pairs[1]);
+				};
+				
+				uniq.push(pairs[2]);
+			};
+			
+			for (let k = 0; k < uniq.length; k++) {
+				calc.push([]);
+				
+				for (let n = 0; n < 2; n++) {
+					calc[k].push([]);
+					
+					for (let j = 0; j < 4; j++) {
+						calc[k][n].push(new Pair(
+							uniq[k][n][0],
+							uniq[k][n][1],
+							act[j])
+						);
+						
+						calc[k][n][j].operation();
+					}
+				}
+			};
+			
+			for (let p = 0; p < uniq.length; p++) {
+				for (let r = 0; r < 4; r++) {
+					for (let m = 0; m < 4; m++) {
+						for (let s = 0; s < 4; s++) {
+							if (act[s]([
+										calc[p][1][r].result,
+										calc[p][0][m].result,
+									]) === 24
+								) {
+								result.push([]);
+								result[result.length - 1].push(calc[p][1][r]);
+								result[result.length - 1].push(calc[p][0][m]);
+								result[result.length - 1].push(act[s]);
+							}
+						}
+					}
+				}
+			};
+			
+			for (let v = 0; v < result.length; v++) {
+				for (let w = 1; w >= 0; w--) {
+					switch (result[v][w].callback) {
+							case add:
+								formula += `(${result[v][w].num2}+${result[v][w].num1})`;
+							break;
+							case sub:
+								formula += `(${result[v][w].num2}-${result[v][w].num1})`;
+							break;
+							case mul:
+								formula += `${result[v][w].num2}*${result[v][w].num1}`;
+							break;
+							case div:
+								formula += `${result[v][w].num2}/${result[v][w].num1}`;
+							break;
+					};
+					
+					if (w === 1) {
+						switch (result[v][2]) {
+							case add:
+								formula += `+`;
+							break;
+							case sub:
+								formula += `-`;
+							break;
+							case mul:
+								formula += `*`;
+							break;
+							case div:
+								formula += `/`;
+							break;
+						}
+					} else {
+						output.push(formula);
+					}
+				};
+				
+				formula = '';
+			};
+			
+			
+			
+			function numSort(arr) {
+				let isSort = true;
+				
+				while (isSort) {
+					isSort = false;
+					for (let i = 0; i < arr.length - 1; i++) {
+						if (arr[i] > arr[i + 1]) {
+							[arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+							isSort = true;
+						}
+					}
+				};
+				
+				return arr;
+			};
+			
+			function Pair(x, y, action) {
+				this.num1 = x;
+				this.num2 = y;
+				this.callback = action;
+				this.result = 0;
+								
+				this.operation = function() {
+					this.result = this.callback([this.num1, this.num2]);
+				}
+			};
+			
+			if (output.length === 0) {
+				return "no solution exists";
+			} else {
+				return output;
+			}
+		};
+
+		document.write(solve24("1127"));
+	</script>
+</html>
